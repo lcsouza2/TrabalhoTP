@@ -1,8 +1,11 @@
 import random
 import json
 import string
+from faker import Faker
+fake = Faker(["pt_BR"])
+import unidecode
 
-
+  
 #Gera uma matrícula aleatória {
 def GerarMatricula():  
 
@@ -21,6 +24,21 @@ def GerarMatricula():
   return NovaMatricula 
 #}
 
+#Carrega os dados no Json {
+def LoadJson(ArquivoJson):
+  try:
+    with open(ArquivoJson, "r") as Arquivo:
+      DadosNoJson = json.load(Arquivo)
+    return DadosNoJson
+  
+  #Caso o arquivo esteja vazio
+  except json.JSONDecodeError:
+    return []
+  
+  # Caso o arquivo não exista:
+  except FileNotFoundError:
+    return []
+#Carrega os dados no Json }
 
 #Adiciona um aluno no json {
 def AddAluno(nome):
@@ -29,31 +47,25 @@ def AddAluno(nome):
     "Nome" : nome, 
     "Matricula" : GerarMatricula()
   }
-   
-  DadosARegistrar = json.dumps(Dados, indent= 2) 
+  
+  #Carrega o Json
+  DadosJaGravados = LoadJson("Registros.json")
+  DadosJaGravados.append(Dados)
 
-
-  with open("Registros.json", "a+") as RegistrosAddAluno:
-    if RegistrosAddAluno.tell() > 0:
-      RegistrosAddAluno.write(",\n")
-    RegistrosAddAluno.write(DadosARegistrar)
-
-#}
+  #Grava os dados formatados
+  with open("Registros.json", "w") as arquivo:
+    json.dump(DadosJaGravados, arquivo, indent = 4)
+#Adiciona um aluno no json }
 
 #Remover aluno dos registros {
-def RemAluno(dados):
+def RemAluno():
   
   #Abre o arquivo e lê os dados
-  with open("Registros.json", "r") as RegistrosRemAluno: 
-    AlunosExistentes = json.load(RegistrosRemAluno)
+  AlunosExistentes = LoadJson("Registros.json")
 
-  #Checa se os dados existem no json
-  if dados in AlunosExistentes:
-    del AlunosExistentes[dados]
+def FalsificarNome():
+  for i in range(5):
+    NomeFalso = fake.name()
+    AddAluno(unidecode.unidecode(NomeFalso))
 
-  #Regrava os dados sem o registro a excluir
-  with open("Registros.json", "w") as RegravarAlunos:
-    RegravarAlunos.write(AlunosExistentes)
-
-
-  
+FalsificarNome()

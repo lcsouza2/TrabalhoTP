@@ -1,4 +1,74 @@
-{
-  "Nome": "Luiz",
-  "Matricula": "W51SQB"
-}
+[
+    {
+        "Nome": "Ravy da Cruz",
+        "Matricula": "V82I510"
+    },
+    {
+        "Nome": "Ana Beatriz Sampaio",
+        "Matricula": "17S0ME"
+    },
+    {
+        "Nome": "Juliana Rios",
+        "Matricula": "GWC17T"
+    },
+    {
+        "Nome": "Vitor Gabriel Viana",
+        "Matricula": "5S6K6L"
+    },
+    {
+        "Nome": "Francisco Cunha",
+        "Matricula": "05W1D1"
+    },
+    {
+        "Nome": "Olivia Lopes",
+        "Matricula": "10P2Y1G"
+    },
+    {
+        "Nome": "Marcela Dias",
+        "Matricula": "23UVJ6"
+    },
+    {
+        "Nome": "Leandro Barros",
+        "Matricula": "X8105XR"
+    },
+    {
+        "Nome": "Lorena da Luz",
+        "Matricula": "F1BWS10"
+    },
+    {
+        "Nome": "Ian Rios",
+        "Matricula": "10L84NN"
+    },
+    {
+        "Nome": "Fernando Caldeira",
+        "Matricula": "19VL0C"
+    },
+    {
+        "Nome": "Maria Clara Fogaca",
+        "Matricula": "0RSLM4"
+    },
+    {
+        "Nome": "Augusto Jesus",
+        "Matricula": "Y10W49G"
+    },
+    {
+        "Nome": "Enzo Gabriel Almeida",
+        "Matricula": "J422UR"
+    },
+    {
+        "Nome": "Theo Dias",
+        "Matricula": "57BYZT"
+    },
+    {
+        "Nome": "Yuri Jesus",
+        "Matricula": "2NRA7Z"
+    },
+    {
+        "Nome": "Asafe Farias",
+        "Matricula": "V1R5E5"
+    },
+    {
+        "Nome": "Daniel Guerra",
+        "Matricula": "7017100"
+    }
+]
