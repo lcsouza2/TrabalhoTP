@@ -1,0 +1,10 @@
+[
+    {
+        "Nome": "A",
+        "Email": "A",
+        "Telefone": "A",
+        "Senha": "A",
+        "Logado": true,
+        "Arquivos": "A.json"
+    }
+]
