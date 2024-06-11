@@ -128,7 +128,7 @@ def criar_botao(
     botao.bind("<Enter>", mouse_in)
     botao.bind("<Leave>", mouse_out)
 
-with open("registros.json", "r") as f:
+with open("TRABALHOTP2\\registros.json", "r") as f:
     for i in json.load(f):
         if i["Logado"] is True:
             arquivo_json= i["Nome"] + ".json"
@@ -144,7 +144,7 @@ def adicionar_evento():
     popup_add_evento.geometry("250x400")
     popup_add_evento.resizable(False, False)
     popup_add_evento.title("Adicionar evento")
-    popup_add_evento.iconbitmap("Icones\\addeventicon.ico")
+    popup_add_evento.iconbitmap("TRABALHOTP2\\icones\\addeventicon.ico")
 
     #Frame para posicionar os widgets
     frame_add_evento = tk.Frame(
@@ -230,11 +230,11 @@ def adicionar_evento():
 janela_principal = tk.Tk()
 janela_principal.geometry("820x400")
 janela_principal.resizable(False, False)
-janela_principal.iconbitmap("Icones\\iconhome.ico")
+janela_principal.iconbitmap("TRABALHOTP2\\icones\\iconhome.ico")
 janela_principal.configure(background="#212529", )
 
 #Imagem de fundo dos botões
-img_botoes = Image.open("frame_botoes.png")
+img_botoes = Image.open("TRABALHOTP2\\frame_botoes.png")
 img_botoes = ImageTk.PhotoImage(img_botoes)
 
 #Estilo dos frames
@@ -254,7 +254,7 @@ frame_botoes = ttk.Frame(
 frame_botoes.place( 
     rely=0.5, 
     relx=0.15, 
-    anchor="center"
+    anchor="center"                                                                                                                                                      
 )
 
 #Imagem de fundo dos botões
@@ -280,19 +280,19 @@ linha_separar = ttk.Separator(janela_principal, orient="vertical")
 linha_separar.place(x=250, relheight=1)
 
 #Imagem de fundo da tabela
-img_grade = Image.open("frame_tabela.png")
+img_grade = Image.open("TRABALHOTP2\\frame_tabela.png")
 img_grade = ImageTk.PhotoImage(img_grade)
 
 #Frame para posicionar a tabela
 frame_grade = ttk.Frame(
     janela_principal,
-    width=500,
-    height=360,
+    width=503,
+    height=365,
     style="Frames.TFrame"
 )
 frame_grade.place(
     rely=0.5, 
-    relx=0.68, 
+    relx=0.68,
     anchor="center"
 )
 

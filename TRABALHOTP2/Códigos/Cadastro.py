@@ -175,13 +175,13 @@ def cadastrar(entry_nome, entry_email, entry_telefone, entry_senha):
 
 def logar():
     janela_principal.destroy() 
-    subprocess.run(["python", "Códigos\\Login.py"])
+    subprocess.run(["python", "TRABALHOTP2\\Códigos\\Login.py"])
 
 janela_principal = tk.Tk()
 janela_principal.title("Cadastro")
 janela_principal.geometry("300x400")
 janela_principal.resizable(False, False)
-janela_principal.iconbitmap("Icones\\iconadd.ico")
+janela_principal.iconbitmap("TRABALHOTP2\\icones\\iconadd.ico")
 janela_principal["bg"] = "#212529"
     
 frame_cadastro = tk.Frame(

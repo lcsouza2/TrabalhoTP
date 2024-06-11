@@ -165,7 +165,7 @@ def logar():
 def trocar_senha():
     popup_trocar_senha = tk.Toplevel(janela_principal, bg="#343A40")
     popup_trocar_senha.geometry("300x170")
-    popup_trocar_senha.iconbitmap("Icones\\changepwd.ico")
+    popup_trocar_senha.iconbitmap("TRABALHOTP2\\icones\\changepwd.ico")
     popup_trocar_senha.resizable(False, False)
 
     nome_entry = criar_entry(
@@ -237,7 +237,7 @@ janela_principal = tk.Tk()
 janela_principal.title("Login")
 janela_principal.geometry("280x350")
 janela_principal.resizable(False, False)
-janela_principal.iconbitmap("Icones\\iconlogin.ico")
+janela_principal.iconbitmap("TRABALHOTP2\\icones\\iconlogin.ico")
 janela_principal["bg"] = "#212529"
 
 frame_login = tk.Frame(
