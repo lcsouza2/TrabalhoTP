@@ -135,13 +135,13 @@ def logar():
             except json.JSONDecodeError: #Executa caso o arquivo esteja vazio
                 messagebox.showwarning("Sem usuários", "O arquivo de registros está vazio, cadastre-se antes")
                 janela_principal.destroy()
-                subprocess.run(["python", "Códigos\\Cadastro.py"])
+                subprocess.run(["python", "TRABALHOTP2\\codigos\\Cadastro.py"])
                 return
             
     except FileNotFoundError: #Executa caso o arquivo não exista 
         messagebox.showwarning("Sem usuários", "O arquivo de registros está vazio, cadastre-se antes")
         janela_principal.destroy()
-        subprocess.run(["python", "Códigos\\Cadastro.py"])
+        subprocess.run(["python", "TRABALHOTP2\\codigos\\Cadastro.py"])
 
     else: #Executa caso não haja erros 
         with open("registros.json", "w") as regravar:
@@ -160,12 +160,12 @@ def logar():
         else:
             messagebox.showinfo("Sucesso!", "Estamos te redirecionando!")
             janela_principal.destroy()
-            subprocess.run(["python", "Códigos\\Principal.py"])
+            subprocess.run(["python", "TRABALHOTP2\\codigos\\Principal.py"])
 
 def trocar_senha():
     popup_trocar_senha = tk.Toplevel(janela_principal, bg="#343A40")
     popup_trocar_senha.geometry("300x170")
-    popup_trocar_senha.iconbitmap("TRABALHOTP2\\icones\\changepwd.ico")
+    popup_trocar_senha.iconbitmap("TRABALHOTP2\\icones\\change_pwd_icon.ico")
     popup_trocar_senha.resizable(False, False)
 
     nome_entry = criar_entry(
@@ -193,13 +193,13 @@ def trocar_senha():
                 except json.JSONDecodeError: #Executa caso o arquivo esteja vazio
                     messagebox.showwarning("Sem usuários", "O arquivo de registros está vazio, cadastre-se antes")
                     janela_principal.destroy()
-                    subprocess.run(["python", "Códigos\\Cadastro.py"])
+                    subprocess.run(["python", "TRABALHOTP2\\codigos\\Cadastro.py"])
                     return
                 
         except FileNotFoundError: #Executa caso o arquivo não exista 
             messagebox.showwarning("Sem usuários", "O arquivo de registros está vazio, cadastre-se antes")
             janela_principal.destroy()
-            subprocess.run(["python", "Códigos\\Cadastro.py"])
+            subprocess.run(["python", "TRABALHOTP2\\codigos\\Cadastro.py"])
 
         else: #Executa caso não haja erros 
             with open("registros.json", "w") as regravar:
@@ -237,7 +237,7 @@ janela_principal = tk.Tk()
 janela_principal.title("Login")
 janela_principal.geometry("280x350")
 janela_principal.resizable(False, False)
-janela_principal.iconbitmap("TRABALHOTP2\\icones\\iconlogin.ico")
+janela_principal.iconbitmap("TRABALHOTP2\\icones\\login_icon.ico")
 janela_principal["bg"] = "#212529"
 
 frame_login = tk.Frame(

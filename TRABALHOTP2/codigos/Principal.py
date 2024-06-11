@@ -12,8 +12,9 @@ from PIL import Image, ImageTk
 libs = {
     "pillow" : "from PIL import Image, ImageTk",
     "typing_Callable" : "from typing import Callable",
-    "tkinter_font" : "from tkinter import font, messagebox",
+    "tkinter_font" : "from tkinter import messagebox",
     "tkinter_all" : "import tkinter as tk",
+    "tkinter_ttk" : "import tkinter.ttk as ttk",
     "json" : None
 }
 
@@ -37,7 +38,7 @@ with open("TRABALHOTP2\\registros.json", "r") as f:
     for i in json.load(f):
         if i["Logado"] is True:
             i["Logado"] = False
-            arquivo_json= f"TRABALHOTP2\\dados\\{i["Nome"]}.json"
+            arquivo_json= f"TRABALHOTP2\\dados\\"+i["Nome"]+".json"
 
 def ler_json():
     try:
@@ -48,7 +49,8 @@ def ler_json():
                 return []
     except FileNotFoundError:
         with open(arquivo_json, "w"):
-            return []
+            return []   
+
 def regravar_json(dados_antigos, dados_adicionar):
     with open(arquivo_json, "w") as file:
         dados_antigos.append(dados_adicionar)
@@ -168,7 +170,7 @@ def adicionar_evento():
     popup_add_evento.geometry("250x400")
     popup_add_evento.resizable(False, False)
     popup_add_evento.title("Adicionar evento")
-    popup_add_evento.iconbitmap("TRABALHOTP2\\icones\\addeventicon.ico")
+    popup_add_evento.iconbitmap("TRABALHOTP2\\icones\\add_event_icon.ico")
 
     #Frame para posicionar os widgets
     frame_add_evento = tk.Frame(
@@ -274,13 +276,195 @@ def adicionar_evento():
         0.85,
         cor_interacao="#7C0902")
 
-def remover_dados():
+def remover_evento():
+    """
+    Função:
+        Usa os dados no entry para remover um evento
+    """
+
+    #Configurações do Pop-Up
+    popup_rem_evento = tk.Toplevel(bg="#212529")
+    popup_rem_evento.geometry("400x250")
+    popup_rem_evento.resizable(False, False)
+    popup_rem_evento.title("Remover evento")
+    popup_rem_evento.iconbitmap("TRABALHOTP2\\icones\\remove_event_icon.ico")
+
+    #Frame para posicionar os widgets
+    frame_rem_evento = tk.Frame(
+        popup_rem_evento
+    )
+    frame_rem_evento.place(
+        anchor="center",
+        relheight=0.79,
+        relwidth=0.79,
+        relx=0.5,
+        rely=0.5
+    )
+
+    #Carrega a imagem e adapta para o tkinter
+    img_rem_evento = Image.open("TRABALHOTP2\\imagens\\frame_rem_event.png")
+    img_rem_evento = ImageTk.PhotoImage(img_rem_evento)
+
+    #Label para posicionar a imagem
+    image_rem_evento = tk.Label(
+        frame_rem_evento, 
+        image=img_rem_evento
+    )
+    image_rem_evento.place(anchor="center", relheight=1, relwidth=1, relx=0.5, rely=0.5)
+    
+    #Mantém a imagem para evitar ela de ser excluída pelo garbage collector
+    image_rem_evento.image=img_rem_evento
+
+    def carregar_eventos():
+        eventos = [] 
+
+        for i in ler_json():
+            eventos.append(i["Descricao"]) 
+        return eventos              
+
+    #Combobox para mostrar os eventos
+    menu_eventos = ttk.Combobox(
+        frame_rem_evento, 
+        values=carregar_eventos(), 
+        state="readonly", 
+        width=35
+    )
+    menu_eventos.place(anchor="center", rely=0.1, relx=0.5)
+    
+    def remover_evento():
+        confirm = messagebox.askyesno("Certeza?", "Deseja mesmo remover esse evento?")
+        dados = ler_json()
+
+        if confirm is True:
+            for i in dados:
+                if i["Descricao"] == menu_eventos.get():
+                    dados.remove(i)
+                    with open(arquivo_json, "w") as f:
+                        json.dump(dados, f, indent=4)
+                    messagebox.showinfo("Feito!", "O evento foi removido com sucesso")
+                    menu_eventos["values"] = carregar_eventos()
+
+    botao_confirmar = criar_botao(
+        frame_rem_evento, 
+        "Excluir", 
+        remover_evento, 
+        0.5,
+        0.1,
+        0.8,
+        0.5,
+    )
+
+def alterar_evento():
+    #Configurações do Pop-Up
+    popup_alt_evento = tk.Toplevel(bg="#212529")
+    popup_alt_evento.geometry("250x400")
+    popup_alt_evento.resizable(False, False)
+    popup_alt_evento.title("Alterar evento")
+    popup_alt_evento.iconbitmap("TRABALHOTP2\\icones\\change_pwd_icon.ico")
+    
+    frame_alt_evento = tk.Frame(
+        popup_alt_evento
+    )
+    frame_alt_evento.place(
+        anchor="center",
+        relheight=0.79,
+        relwidth=0.79,
+        relx=0.5,
+        rely=0.5
+    )
+
+    #Carrega a imagem e adapta para o tkinter
+    img_alt_evento = Image.open("TRABALHOTP2\\imagens\\frame_alt_event.png")
+    img_alt_evento = ImageTk.PhotoImage(img_alt_evento)
+
+    #Label para posicionar a imagem
+    image_alt_evento = tk.Label(
+        frame_alt_evento, 
+        image=img_alt_evento
+    )
+    image_alt_evento.place(anchor="center", relheight=1, relwidth=1, relx=0.5, rely=0.5)
+    
+    #Mantém a imagem para evitar ela de ser excluída pelo garbage collector
+    image_alt_evento.image=img_alt_evento
+
+    def carregar_eventos():
+        eventos = [] 
+
+        for i in ler_json():
+            eventos.append(i["Descricao"]) 
+        return eventos   
+
+    combobox_eventos = ttk.Combobox(
+        frame_alt_evento, 
+        values=carregar_eventos(), 
+        state="readonly"
+    )
+    combobox_eventos.place(anchor="center", rely=0.1, relx=0.5)
+
+    entry_descricao = criar_entry(
+        frame_alt_evento,
+        "",
+        0.8,
+        0.1,
+        0.3
+    )
+    entry_data = criar_entry(
+        frame_alt_evento,
+        "",
+        0.8,
+        0.1,
+        0.45
+    )
+    entry_hora = criar_entry(
+        frame_alt_evento,
+        "",
+        0.8,
+        0.1,
+        0.6
+    )
+
+    def atualizar_placeholders(evento):
+        for i in ler_json():
+            if i["Descricao"] == combobox_eventos.get():
+                entry_descricao.delete(0, "end")
+                entry_descricao.insert(0, i["Descricao"])
+                entry_data.delete(0, "end")
+                entry_data.insert(0, i["Data"])
+                entry_hora.delete(0, "end")
+                entry_hora.insert(0, i["Hora"])
+                break
+
+
+    combobox_eventos.bind("<<ComboboxSelected>>", atualizar_placeholders)
+
+    def confirmar():
+        dados = []
+        for i in ler_json():
+            if i["Descricao"] == combobox_eventos.get():
+                i["Descricao"]=entry_descricao.get()
+                i["Data"]=entry_data.get()
+                i["Hora"]=entry_hora.get()
+            dados.append(i)    
         
+        with open(arquivo_json, "w") as f:
+            json.dump(dados, f, indent = 4)
+        combobox_eventos["values"] = carregar_eventos()
+
+    botao_confimrar = criar_botao(
+        frame_alt_evento,
+        "Confirmar",
+        confirmar,
+        0.8,
+        0.08,
+        0.9
+    )
+
+
 #Configurações da janela principal
 janela_principal = tk.Tk()
 janela_principal.geometry("820x400")
 janela_principal.resizable(False, False)
-janela_principal.iconbitmap("TRABALHOTP2\\icones\\iconhome.ico")
+janela_principal.iconbitmap("TRABALHOTP2\\icones\\home_icon.ico")
 janela_principal.configure(background="#212529", )
 
 #Imagem de fundo dos botões
@@ -324,6 +508,22 @@ botao_add_evento = criar_botao(
     0.5,
     0.5
 )
+botao_rem_evento = criar_botao(
+    frame_botoes,
+    "Remover evento",
+    remover_evento,
+    0.8,
+    0.08,
+    0.65,
+
+)
+botao_alt_evento = criar_botao(
+    frame_botoes,
+    "Alterar evento",
+    alterar_evento,
+    0.8,
+    0.08,
+    0.9)
 
 #Linha no meio da tela 
 linha_separar = ttk.Separator(janela_principal, orient="vertical")

@@ -171,17 +171,17 @@ def cadastrar(entry_nome, entry_email, entry_telefone, entry_senha):
             messagebox.showinfo("Cadastro efetuado", "Estamos te encaminhando a tela principal")
 
             janela_principal.destroy()
-            subprocess.run(["python", "Códigos\\Principal.py"])
+            subprocess.run(["python", "TRABALHOTP2\\codigos\\Principal.py"])
 
 def logar():
     janela_principal.destroy() 
-    subprocess.run(["python", "TRABALHOTP2\\Códigos\\Login.py"])
+    subprocess.run(["python", "TRABALHOTP2\\codigos\\Login.py"])
 
 janela_principal = tk.Tk()
 janela_principal.title("Cadastro")
 janela_principal.geometry("300x400")
 janela_principal.resizable(False, False)
-janela_principal.iconbitmap("TRABALHOTP2\\icones\\iconadd.ico")
+janela_principal.iconbitmap("TRABALHOTP2\\icones\\add_user_icon.ico")
 janela_principal["bg"] = "#212529"
     
 frame_cadastro = tk.Frame(
