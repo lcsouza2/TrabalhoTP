@@ -1,33 +1,8 @@
-import sys 
 import subprocess
-import importlib
-import tkinter as tk
 import json
-from typing import Callable
+import tkinter as tk
 from tkinter import messagebox
-
-libs = {
-    "typing_Callable" : "from typing import Callable",
-    "tkinter_font" : "from tkinter import font, messagebox",
-    "tkinter_all" : "import tkinter as tk",
-    "json" : None
-}
-
-def check_import(lib, especifico=None):
-    """Importa as bibliotecas no dicionário libs"""
-
-    try:
-        importlib.import_module(lib.split("_")[0])
-    except ImportError:
-        subprocess.check_call([sys.executable, "-n", "pip", "install", lib])
-    finally:
-        if especifico is None:
-            globals()[lib] = __import__(lib)
-        else:
-            exec(especifico, globals())
-
-# for lib, especifico in libs.items():
-#     check_import(lib, especifico)
+from typing import Callable
 
 def criar_entry(
         wid_pai:str, 
@@ -40,7 +15,8 @@ def criar_entry(
         cor_texto:str="#495057", 
         relevo:str="groove", 
         mostrar:str=""
-):
+    ):
+
     """
     Função: 
         Cria um widget entry com as especificações definidas nos argumentos
@@ -52,14 +28,21 @@ def criar_entry(
     Retorna:
         Retorna o valor digitado na caixa
     """
+
     entry = tk.Entry(wid_pai, fg=cor_texto, relief=relevo)
     entry.insert(0, placeholder)
-    entry["justify"] = "center"
-    entry.place(relwidth=largura, relheight=altura, 
-                rely=pos_y, relx=pos_x, anchor=ancora)
+    entry["justify"]="center"
+    entry.place(
+        relwidth=largura, 
+        relheight=altura, 
+        rely=pos_y, 
+        relx=pos_x, 
+        anchor=ancora
+    )
     
     def entry_clicado(evento):
         """Remove o texto de dentro do entry quando clicado"""
+
         if entry.get() == placeholder:
             entry.delete(0, "end") 
             entry.insert(0, "")
@@ -69,6 +52,7 @@ def criar_entry(
 
     def entry_padrao(evento):
         """Adiciona o texto caso o widget esteja em branco depois de clicado"""
+
         if entry.get() == "":
             entry.insert(0, placeholder)
             entry["show"] = ""
@@ -96,7 +80,8 @@ def criar_botao(
         cor_texto:str="#ADB5BD", 
         relevo:str="groove", 
         cursor:str="hand2"
-):
+    ):
+
     """
     Função: 
         Cria um widget botão com as especificações definidas nos argumentos
@@ -105,6 +90,7 @@ def criar_botao(
     Retorna:
         Nada
     """
+
     botao = tk.Button(
         wid_pai, 
         text=placeholder, 
@@ -115,8 +101,9 @@ def criar_botao(
         fg=cor_texto, 
         relief=relevo, 
         cursor=cursor
-)
+    )
     botao.place(relwidth=largura, relheight=altura, rely=pos_y, relx=pos_x, anchor=ancora)
+
     def mouse_in(evento):
         botao["bg"] = cor_interacao
     def mouse_out(evento):
@@ -151,7 +138,7 @@ def cadastrar(entry_nome, entry_email, entry_telefone, entry_senha):
         }
 
         try:
-            with open("registros.json", "r") as ler_json: #Abre o arquivo
+            with open("TRABALHOTP2\\registros.json", "r") as ler_json: #Abre o arquivo
                 try:
                     usuarios_no_json = json.load(ler_json) #tenta ler o arquivo
                 except json.JSONDecodeError:
@@ -159,14 +146,18 @@ def cadastrar(entry_nome, entry_email, entry_telefone, entry_senha):
         except FileNotFoundError:
             usuarios_no_json = [] #retorna uma lista vazia se o arquivo não existir
         
+
+        flag = True
         for i in usuarios_no_json:
-            if dados["Nome"] == i["Nome"]: 
+            if dados["Nome"] == i["Nome"]:
+                flag=False
                 messagebox.showerror("Usuário existente", "O usuário já existe!")
                 break 
-        else:
+        
+        if flag:
             usuarios_no_json.append(dados) #Adiciona os dados a lista
 
-            with open("registros.json", "w") as gravar_dados:
+            with open("TRABALHOTP2\\registros.json", "w") as gravar_dados:
                 json.dump(usuarios_no_json, gravar_dados, indent= 4 )
             messagebox.showinfo("Cadastro efetuado", "Estamos te encaminhando a tela principal")
 

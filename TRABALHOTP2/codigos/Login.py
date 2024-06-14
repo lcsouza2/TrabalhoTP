@@ -1,34 +1,9 @@
-import sys 
 import subprocess
-import importlib
 import tkinter as tk
 import tkinter.ttk as ttk
 import json
 from typing import Callable
 from tkinter import messagebox
-
-libs = {
-    "typing_Callable" : "from typing import Callable",
-    "tkinter_font" : "from tkinter import font, messagebox",
-    "tkinter_all" : "import tkinter as tk",
-    "json" : None
-}
-
-def check_import(lib, especifico=None):
-    """Importa as bibliotecas no dicionário libs"""
-
-    try:
-        importlib.import_module(lib.split("_")[0])
-    except ImportError:
-        subprocess.check_call([sys.executable, "-n", "pip", "install", lib])
-    finally:
-        if especifico is None:
-            globals()[lib] = __import__(lib)
-        else:
-            exec(especifico, globals())
-
-#for lib, especifico in libs.items():
-#    check_import(lib, especifico)
 
 def criar_entry(
     wid_pai:str, 
@@ -128,7 +103,7 @@ def criar_botao(
 
 def logar():
     try:
-        with open("registros.json", "r+") as ler_json: #Tenta abrir o json
+        with open("TRABALHOTP2\\registros.json", "r+") as ler_json: #Tenta abrir o json
             try:
                 dados_no_json = json.load(ler_json) #Tenta ler o json
             
@@ -144,8 +119,9 @@ def logar():
         subprocess.run(["python", "TRABALHOTP2\\codigos\\Cadastro.py"])
 
     else: #Executa caso não haja erros 
-        with open("registros.json", "w") as regravar:
+        with open("TRABALHOTP2\\registros.json", "w") as regravar:
             dados_regravar=[]
+            encontrado = False
             for i in dados_no_json:
                 if (i["Nome"] == entry_nome.get() and
                     i["Senha"] == entry_senha.get()):
@@ -177,16 +153,16 @@ def trocar_senha():
     )
     senha_entry = criar_entry(
         popup_trocar_senha,
-        "Digite sua senha",
+        "Digite sua nova senha",
         0.6,
         0.15,
         0.3,
         mostrar="*"
     )
-   
+
     def confirmar():
         try:
-            with open("registros.json", "r+") as ler_json: #Tenta abrir o json
+            with open("TRABALHOTP2\\registros.json", "r+") as ler_json: #Tenta abrir o json
                 try:
                     dados_no_json = json.load(ler_json) #Tenta ler o json
                 
@@ -202,13 +178,21 @@ def trocar_senha():
             subprocess.run(["python", "TRABALHOTP2\\codigos\\Cadastro.py"])
 
         else: #Executa caso não haja erros 
-            with open("registros.json", "w") as regravar:
+            encontrado = False
+            with open("TRABALHOTP2\\registros.json", "w") as regravar:
                 dados_regravar=[]
+
                 for i in dados_no_json:
                     if i["Nome"] == nome_entry.get():
+                        encontrado = True
                         i["Senha"] = senha_entry.get()
+                        messagebox.showinfo("Sucesso", "senha alterada!")
+                        popup_trocar_senha.destroy()
+
                     dados_regravar.append(i)
                 json.dump(dados_regravar, regravar, indent=4)
+            if encontrado is False:
+                messagebox.showwarning("Cadastro não encontrado", "O cadastro informado não foi encontrado, verifique os dados!")
                         
     botao_confirmar = criar_botao(
         popup_trocar_senha, 
@@ -298,4 +282,6 @@ botao_trocar_senha = criar_botao(
     cor_texto="lightblue",
     relevo="flat"
 )
+
+
 tk.mainloop()

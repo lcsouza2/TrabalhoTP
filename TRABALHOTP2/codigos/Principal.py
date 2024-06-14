@@ -1,53 +1,41 @@
-import sys 
-import subprocess
-import importlib
+import json
 import tkinter as tk
 import tkinter.ttk as ttk
-import json
-from typing import Callable
 from tkinter import messagebox
 from PIL import Image, ImageTk
-
-
-libs = {
-    "pillow" : "from PIL import Image, ImageTk",
-    "typing_Callable" : "from typing import Callable",
-    "tkinter_font" : "from tkinter import messagebox",
-    "tkinter_all" : "import tkinter as tk",
-    "tkinter_ttk" : "import tkinter.ttk as ttk",
-    "json" : None
-}
-
-def check_import(lib, especifico=None):
-    """Importa as bibliotecas no dicionário libs"""
-
-    try:
-        importlib.import_module(lib.split("_")[0])
-    except ImportError:
-        subprocess.check_call([sys.executable, "-n", "pip", "install", lib])
-    finally:
-        if especifico is None:
-            globals()[lib] = __import__(lib)
-        else:
-            exec(especifico, globals())
-
-#for lib, especifico in libs.items():
-#    check_import(lib, especifico)
+from typing import Callable
 
 with open("TRABALHOTP2\\registros.json", "r") as f:
+    users=[]
     for i in json.load(f):
+        users.append(i)
         if i["Logado"] is True:
-            i["Logado"] = False
-            arquivo_json= f"TRABALHOTP2\\dados\\"+i["Nome"]+".json"
+            i["Logado"] = False #Determina o estado de login como false
+            arquivo_json= f"TRABALHOTP2\\dados\\"+i["Nome"]+".json" #Determina o arquivo do usuário
+            
+            try:
+                with open(arquivo_json, "r") as file_read:
+                    try:
+                        json.load(file_read)
+                    except json.JSONDecodeError: #Exceção para arquivo vazio 
+                        with open(arquivo_json, "w") as file_write:
+                            json.dump([], file_write)
+            except FileNotFoundError: #Exceção arquivo inexistente 
+                with open(arquivo_json, "w") as file_write:
+                            json.dump([], file_write)
+
+with open("TRABALHOTP2\\registros.json", "w") as file:
+    json.dump(users, file, indent=4)
+
 
 def ler_json():
     try:
         with open(arquivo_json, "r") as file:
             try:
                 return json.load(file)
-            except json.JSONDecodeError:
+            except json.JSONDecodeError: #Arquivo vazio
                 return []
-    except FileNotFoundError:
+    except FileNotFoundError: #Arquivo inexistente
         with open(arquivo_json, "w"):
             return []   
 
@@ -55,7 +43,14 @@ def regravar_json(dados_antigos, dados_adicionar):
     with open(arquivo_json, "w") as file:
         dados_antigos.append(dados_adicionar)
         json.dump(dados_antigos, file, indent=4)
-    messagebox.showinfo("Feito!", "Evento adicionado com sucesso")
+
+
+def carregar_imagem(caminho):
+    #Carrega a imagem e adapta para o tkinter
+
+    img = Image.open(caminho)
+    img = ImageTk(img)
+    return img
 
 def criar_entry(
     wid_pai:str, 
@@ -68,7 +63,8 @@ def criar_entry(
     cor_texto:str="#495057", 
     relevo:str="groove", 
     mostrar:str=""
-):
+    ):
+
     """
     Função: 
         Cria um widget entry com as especificações definidas nos argumentos
@@ -80,28 +76,36 @@ def criar_entry(
     Retorna:
         Retorna o valor digitado na caixa
     """
+
     entry = ttk.Entry(wid_pai, foreground=cor_texto)
     entry.insert(0, placeholder)
     entry["justify"] = "center"
-    entry.place(relwidth=largura, relheight=altura, 
-                rely=pos_y, relx=pos_x, anchor=ancora)
+    entry.place(
+        relwidth=largura, 
+        relheight=altura, 
+        rely=pos_y, 
+        relx=pos_x, 
+        anchor=ancora
+    )
     
     def entry_clicado(evento):
         """Remove o texto de dentro do entry quando clicado"""
+
         if entry.get() == placeholder:
             entry.delete(0, "end") 
             entry.insert(0, "")
-            entry["show"] = mostrar
-            entry["foreground"] = "Black"
-            entry["justify"] = "left"   
+            entry["show"]=mostrar
+            entry["foreground"]="Black"
+            entry["justify"]="left"   
 
     def entry_padrao(evento):
         """Adiciona o texto caso o widget esteja em branco depois de clicado"""
+
         if entry.get() == "":
             entry.insert(0, placeholder)
-            entry["show"] = ""
-            entry["foreground"] = "#495057"
-            entry["justify"] = "center"
+            entry["show"]=""
+            entry["foreground",]="#495057"
+            entry["justify"]="center"
     
     #Eventos de interação com o entry 
     entry.bind("<FocusIn>", entry_clicado)
@@ -109,22 +113,23 @@ def criar_entry(
     return entry
 
 def criar_botao(
-        wid_pai:str, 
-        placeholder:str, 
-        comando:Callable,
-        largura:float, 
-        altura:float, 
-        pos_y:float, 
-        pos_x:float=0.5, 
-        ancora:str="center",
-        cor_fundo:str="#495057",
-        cor_interacao:str="#343A40",
-        cor_clicado:str="#343A40",
-        cor_texto_clicado:str="#ADB5BD", 
-        cor_texto:str="#ADB5BD", 
-        relevo:str="groove", 
-        cursor:str="hand2"
-):
+    wid_pai:str, 
+    placeholder:str, 
+    comando:Callable,
+    largura:float, 
+    altura:float, 
+    pos_y:float, 
+    pos_x:float=0.5, 
+    ancora:str="center",
+    cor_fundo:str="#495057",
+    cor_interacao:str="#343A40",
+    cor_clicado:str="#343A40",
+    cor_texto_clicado:str="#ADB5BD", 
+    cor_texto:str="#ADB5BD", 
+    relevo:str="groove", 
+    cursor:str="hand2"
+    ):
+
     """
     Função: 
         Cria um widget botão com as especificações definidas nos argumentos
@@ -133,18 +138,27 @@ def criar_botao(
     Retorna:
         Nada
     """
+
     botao = tk.Button(
-        wid_pai, 
-        text=placeholder, 
-        command=comando, 
-        background=cor_fundo, 
-        activebackground=cor_clicado, 
-        activeforeground=cor_texto_clicado, 
-        foreground=cor_texto, 
-        relief=relevo, 
-        cursor=cursor
-)
-    botao.place(relwidth=largura, relheight=altura, rely=pos_y, relx=pos_x, anchor=ancora)
+    wid_pai, 
+    text=placeholder, 
+    command=comando, 
+    background=cor_fundo, 
+    activebackground=cor_clicado, 
+    activeforeground=cor_texto_clicado, 
+    foreground=cor_texto, 
+    relief=relevo, 
+    cursor=cursor
+    )
+
+    botao.place(
+    relwidth=largura, 
+    relheight=altura, 
+    rely=pos_y, 
+    relx=pos_x, 
+    anchor=ancora
+    )
+    
     def mouse_in(evento):
         botao["bg"] = cor_interacao
 
@@ -154,10 +168,20 @@ def criar_botao(
     botao.bind("<Enter>", mouse_in)
     botao.bind("<Leave>", mouse_out)
 
-
 def entry_valido(entry, placeholder):
     digitado = entry.get()
     return digitado and digitado.strip() and digitado != placeholder
+
+def atualizar_tabela():
+    for i in tabela.get_children():
+        tabela.delete(i)
+
+    with open(arquivo_json, "r") as arq_eventos:
+        try:
+            for i in json.load(arq_eventos):
+                tabela.insert("", "end", values=(i["Descricao"], i["Data"], i["Hora"]))
+        except json.JSONDecodeError:
+            return []
 
 def adicionar_evento():
     """
@@ -173,9 +197,7 @@ def adicionar_evento():
     popup_add_evento.iconbitmap("TRABALHOTP2\\icones\\add_event_icon.ico")
 
     #Frame para posicionar os widgets
-    frame_add_evento = tk.Frame(
-        popup_add_evento
-    )
+    frame_add_evento = tk.Frame(popup_add_evento)
     frame_add_evento.place(
         anchor="center",
         relheight=0.9,
@@ -184,19 +206,15 @@ def adicionar_evento():
         rely=0.5
     )
 
-    #Carrega a imagem e adapta para o tkinter
-    img_add_evento = Image.open("TRABALHOTP2\\imagens\\frame_add_event.png")
-    img_add_evento = ImageTk.PhotoImage(img_add_evento)
-
     #Label para posicionar a imagem
     image_add_evento = tk.Label(
         frame_add_evento, 
-        image=img_add_evento
+        image=carregar_imagem("TRABALHOTP2\\imagens\\frame_add_event.png")
     )
     image_add_evento.place(anchor="center", relheight=1, relwidth=1, relx=0.5, rely=0.5)
     
     #Mantém a imagem para evitar ela de ser excluída pelo garbage collector
-    image_add_evento.image=img_add_evento
+    image_add_evento.image=carregar_imagem("TRABALHOTP2\\imagens\\frame_add_event.png")
 
     #Entrys para receber os dados
     descricao = criar_entry(
@@ -222,7 +240,7 @@ def adicionar_evento():
     )
 
     def confirmar():
-        if  (entry_valido(descricao, "Digite a descrição do evento") and 
+        if (entry_valido(descricao, "Digite a descrição do evento") and 
             entry_valido(data, "Digite a data do evento") and 
             entry_valido(hora, "Digite a hora do evento")):
             
@@ -245,36 +263,41 @@ def adicionar_evento():
                 i["Data"] == evento["Data"]): #Checa se os dados existem se sim duplicado é verdadeiro
                 duplicado = True
                 check = messagebox.askyesno(
-                    "O evento já existe!", 
-                    "O evento já existe na sua agenda, deseja adicionar mesmo assim?"
-                    ) 
+                    "O evento já existe!", #Título
+                    "O evento já existe na sua agenda, deseja adicionar mesmo assim?" #Mensagem
+                ) 
                 if check is True: #Se o usuário selecionar sim no check executa
                     regravar_json(dados_no_json, evento)
+                    messagebox.showinfo("Feito!", "Evento adicionado com sucesso")
+                    popup_add_evento.destroy()
                     return
                 else:
+                    popup_add_evento.destroy()
                     return
                         
         if duplicado is False: #Executado se os dados não existirem no arquivo
-           regravar_json(dados_no_json, evento)
+            regravar_json(dados_no_json, evento)
+            messagebox.showinfo("Feito!", "Evento adicionado com sucesso")
+            popup_add_evento.destroy()
     
     botao_confirmar = criar_botao(
         frame_add_evento,
         "Confirmar",
         confirmar, 
-        0.8,
-        0.07,
-        0.7,
+        0.8, #% largura
+        0.07, #% altura
+        0.7, #% pos_y
         cor_interacao="#1E4D2B"
     )
-
     botao_cancelar = criar_botao(
         frame_add_evento,
         "Cancelar",
         lambda:popup_add_evento.destroy(),
-        0.8,
-        0.07,
-        0.85,
-        cor_interacao="#7C0902")
+        0.8, #% largura
+        0.07, #% altura
+        0.85, #% pos_y
+        cor_interacao="#7C0902"
+    )
 
 def remover_evento():
     """
@@ -333,6 +356,7 @@ def remover_evento():
     
     def remover_evento():
         confirm = messagebox.askyesno("Certeza?", "Deseja mesmo remover esse evento?")
+        
         dados = ler_json()
 
         if confirm is True:
@@ -343,6 +367,7 @@ def remover_evento():
                         json.dump(dados, f, indent=4)
                     messagebox.showinfo("Feito!", "O evento foi removido com sucesso")
                     menu_eventos["values"] = carregar_eventos()
+            popup_rem_evento.destroy()
 
     botao_confirmar = criar_botao(
         frame_rem_evento, 
@@ -449,6 +474,8 @@ def alterar_evento():
         with open(arquivo_json, "w") as f:
             json.dump(dados, f, indent = 4)
         combobox_eventos["values"] = carregar_eventos()
+        messagebox.showinfo("Sucesso!", "O evento foi alterado!")
+        popup_alt_evento.destroy()
 
     botao_confimrar = criar_botao(
         frame_alt_evento,
@@ -459,17 +486,12 @@ def alterar_evento():
         0.9
     )
 
-
 #Configurações da janela principal
 janela_principal = tk.Tk()
 janela_principal.geometry("820x400")
 janela_principal.resizable(False, False)
 janela_principal.iconbitmap("TRABALHOTP2\\icones\\home_icon.ico")
 janela_principal.configure(background="#212529", )
-
-#Imagem de fundo dos botões
-img_botoes = Image.open("TRABALHOTP2\\imagens\\frame_botoes.png")
-img_botoes = ImageTk.PhotoImage(img_botoes)
 
 #Estilo dos frames
 estilo_frame = ttk.Style()
@@ -494,44 +516,47 @@ frame_botoes.place(
 #Imagem de fundo dos botões
 imagem_botoes = tk.Label(
     frame_botoes, 
-    image=img_botoes, 
+    image=carregar_imagem("TRABALHOTP2\\imagens\\frame_botoes.png"), 
     highlightthickness=0
 )
 imagem_botoes.place(relheight=1, relwidth=1)
 
+botao_att_tabela = criar_botao(
+    frame_botoes,
+    "Atualizar tabela",
+    atualizar_tabela,
+    0.8, #% comprimento
+    0.08, #% largura
+    0.45 #% altura
+)
 botao_add_evento = criar_botao(
     frame_botoes,
     "Adicionar evento",
     adicionar_evento,
-    0.8,
-    0.08,
-    0.5,
-    0.5
+    0.8,  #% comprimento
+    0.08,  #% largura
+    0.6, #% altura
 )
 botao_rem_evento = criar_botao(
     frame_botoes,
     "Remover evento",
     remover_evento,
-    0.8,
-    0.08,
-    0.65,
-
+    0.8, #% comprimento
+    0.08, #% largura
+    0.75, #% altura
 )
 botao_alt_evento = criar_botao(
     frame_botoes,
     "Alterar evento",
     alterar_evento,
-    0.8,
-    0.08,
-    0.9)
+    0.8, #% comprimento 
+    0.08, #% largura
+    0.9 #% altura
+)
 
 #Linha no meio da tela 
 linha_separar = ttk.Separator(janela_principal, orient="vertical")
 linha_separar.place(x=250, relheight=1)
-
-#Imagem de fundo da tabela
-img_grade = Image.open("TRABALHOTP2\\imagens\\frame_tabela.png")
-img_grade = ImageTk.PhotoImage(img_grade)
 
 #Frame para posicionar a tabela
 frame_grade = ttk.Frame(
@@ -549,24 +574,10 @@ frame_grade.place(
 #Imagem de fundo da tabela
 imagem_grade = tk.Label(
     frame_grade, 
-    image=img_grade, 
+    image=carregar_imagem("TRABALHOTP2\\imagens\\frame_tabela.png"), 
     highlightthickness=0
 )
 imagem_grade.place(relheight=1, relwidth=1)
-
-
-#Estilo da tabela
-estilo_tabela = ttk.Style()
-estilo_tabela.configure(
-    "estilo.Treeview", 
-    background="#6C757D", 
-    foreground="#CED4DA",
-    fieldbackground="#6C757D")
-estilo_tabela.configure(
-    "estilo.Treeview.Heading",
-    background="#495057",
-    foreground="#CED4DA"
-)
 
 #Estrutura da tabela
 tabela = ttk.Treeview(frame_grade, columns=(0, 1, 2), show="headings", style="estilo.Treeview")
@@ -585,5 +596,5 @@ tabela.place(
     rely=0.5,
     relx=0.5
 )
-
+atualizar_tabela()
 tk.mainloop()
